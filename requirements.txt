@@ -1,0 +1,43 @@
+llama-index
+pydantic
+python-dotenv
+llama-parse
+groq
+llama-index-llms-groq
+llama-index-llms-ollama
+llama-index-embeddings-huggingface
+black
+autopep8
+pylint
+line_profiler
+memory_profiler
+streamlit
+libcst
+path
+pytest
+pytest-asyncio
+langchain
+langchain-groq
+langchain-community
+reportlab
+plotly
+matplotlib
+aiofiles
+poetry
+pipenv
+pipreqs
+loguru
+# llama-index-core
+# llama-index-readers-file
+# llama-index-llms-openai
+# llama-index-embeddings-openai
+
+##################### 
+# PREV VERSION 
+#####################
+# llama-index==0.8.30
+# pydantic==2.3.0
+# python-dotenv==1.0.0
+# llama-parse==0.1.0
+# groq==1.0.0
+# groqflow==0.11.0

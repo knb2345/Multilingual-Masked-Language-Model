@@ -1,216 +1,115 @@
-# AI Code Assistant
+# Self-Attention Visualization and Fine-Tuning with Masked Language Models (MLM)
 
-A sophisticated Streamlit-based application that delivers AI-powered code assistance, performance profiling, and security scanning. By leveraging multiple language models and advanced vector search capabilities, the system provides seamless and context-aware support for various code-related tasks.
+This repository contains a powerful Python tool for exploring and interacting with **pre-trained Masked Language Models (MLMs)**, such as **BERT**, **CamemBERT**, **BERT-based Multilingual** models, and more. The tool allows users to:
+- **Visualize self-attention** mechanisms in action,
+- **Predict missing tokens** (masked tokens) in sentences,
+- **Fine-tune the model** on custom datasets,
+- **Analyze contextual embeddings** using dimensionality reduction techniques (e.g., PCA, t-SNE),
+- **Explain model predictions** using SHAP (SHapley Additive exPlanations) values for interpretability.
 
----
+This project is perfect for anyone interested in natural language processing (NLP), masked language modeling, or understanding how transformers like BERT process and represent language.
 
-## Features
+## Key Features
 
-### Core Capabilities
-- **Multi-Model AI Processing**
-  - Supports Mistral (Ollama), CodeLlama (Ollama), LLaMA 3 (Groq), and GPT-4 (optional OpenAI integration).
+- **Self-Attention Visualization**: Generate attention heatmaps for tokens across different layers and heads of a transformer-based model.
+- **Masked Token Prediction**: Use a pre-trained model to predict the masked token in a sentence.
+- **Model Fine-Tuning**: Easily fine-tune the model with your own dataset and task.
+- **Embedding Analysis**: Visualize the contextual embeddings of tokens in 2D using PCA or t-SNE.
+- **SHAP-based Explainability**: Generate SHAP explanations to understand how each word in a sentence influences the model's predictions.
 
-- **Vector-Based Document Management**
-  - Persistent index storage and real-time updates.
-  - Context-aware querying for efficient document retrieval.
+## Requirements
 
-- **Task Processing**
-  - Production code generation.
-  - Comprehensive code review and analysis.
-  - Automated documentation and test case creation.
-  - Contextual and intelligent querying.
+To use the tool, you need to have the following installed:
 
-- **Profiler**
-  - Real-time performance monitoring and optimization suggestions.
-  - Dependency management and detailed reporting.
-  - AI-powered optimization for Python code.
-  - Supports both synchronous and asynchronous code execution.
+- **Python 3** (recommended version 3.7+)
+- **TensorFlow**
+- **Hugging Face Transformers library**
+- **PIL (Python Imaging Library)**
+- **scikit-learn** for dimensionality reduction (PCA and t-SNE)
+- **SHAP** for explainability
 
-### Security Scanner
-- **Advanced Code Security Scanning**
-  - Quick, deep, and custom scan options.
-  - Extensive vulnerability detection.
-  - Git repository scanning with authentication support.
-  - Detailed reports with severity-based filtering.
-  - Export results in JSON or PDF formats.
+You can install all the dependencies using the following command:
 
-### Technical Implementation
-- Streamlit-based intuitive user interface.
-- Hugging Face embedding model for vector search.
-- Persistent vector store indexing for document management.
-- Multi-model task routing system for optimized performance.
-- Integrated Profiler for performance monitoring and optimization.
-
----
-
-## Installation
-
-### Prerequisites
-- Python 3.8+
-- Installed dependencies for Ollama and Groq APIs.
-- Optional: OpenAI API access for GPT-4.
-
-### Setup
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/AKKI0511/AI-Code-Generator.git
-   cd AI-Code-Generator
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Configure environment variables:
-   ```env
-   GROQ_API_KEY=your_groq_api_key
-   OPENAI_API_KEY=your_openai_api_key  # Optional
-   ```
-
-4. Launch the application:
-   ```bash
-   streamlit run main.py
-   ```
-
----
-
-## Architecture
-
-### Directory Structure
-```
-project/
-├── main.py                 # Application entry point
-├── app.py                  # Core application logic
-├── constants.py            # System constants
-├── requirements.txt        # Dependencies
-├── components/             # UI components
-├── models/                 # AI models and core logic
-├── services/               # Business logic
-└── utils/                  # Utility functions
+```bash
+pip install -r requirements.txt
 ```
 
-### Component Overview
-- **`main.py`**: Initializes and configures the application.
-- **`app.py`**: Manages the Streamlit interface and user interaction.
-- **`code_assistant.py`**: Core AI processing and task orchestration.
-- **`task_service.py`**: Task-specific business logic.
-- **`session_state.py`**: Manages application states across sessions.
+## Getting Started
 
----
+Follow these simple steps to get started:
 
-## Functional Specifications
+1. **Clone the repository**:
 
-### Code Generation
-- **Input**: Natural language description.
-- **Output**: Production-ready Python code.
-- **Features**:
-  - Implements error handling and type hints.
-  - Ensures PEP compliance and performance optimization.
-  - Auto-generates documentation.
+    ```bash
+    git clone https://github.com/AKKI0511/Masked-Language-Model.git
+    cd Masked-Language-Model
+    ```
 
-### Code Review
-- **Capabilities**:
-  - Evaluates code quality and identifies bugs.
-  - Analyzes performance and security.
-  - Provides optimization recommendations.
+2. **Run the script**:
 
-### Profiler
-- **Capabilities**:
-  - Monitors execution time, memory usage, and CPU utilization.
-  - Provides AI-powered optimization suggestions.
-  - Generates detailed performance reports.
-  - Supports both synchronous and asynchronous code execution.
+    ```bash
+    python mask.py
+    ```
 
-### Documentation Generation
-- **Output Components**:
-  - System overviews, implementation details, API documentation, and usage examples.
-  - Parameter specifications with clear formatting.
+3. **Choose your language**: Upon running the script, you'll be prompted to select a language model. You can choose between **English**, **French**, **German**, **Chinese**, or **Japanese**.
 
-### Test Case Creation
-- **Features**:
-  - Generates test cases using Pytest framework.
-  - Covers edge cases, error scenarios, and assertions.
-  - Includes test documentation.
+4. **Interact with the model**: You will be presented with several options to interact with the model:
+    - **Predict masked token**: Enter a sentence with a `[MASK]` token and see the model's top predictions.
+    - **Fine-tune model**: Fine-tune the model on your custom text dataset.
+    - **Analyze contextual embeddings**: Visualize token embeddings in a 2D space using PCA or t-SNE.
+    - **Explain prediction**: Generate SHAP explanations to visualize how each word contributes to the model's masked token prediction.
+    - **Exit**: Terminate the program.
 
-### Query Processing
-- **Highlights**:
-  - Provides context-aware responses with source citation.
-  - Aids code comprehension and implementation guidance.
-  - Recommends best practices.
+## Features in Detail
 
----
+### 1. **Masked Token Prediction**
+You can input a sentence with a missing word (e.g., `I love [MASK] in the morning.`), and the model will predict the missing token based on the context. Additionally, you can visualize the **self-attention weights** to understand which words in the sentence the model focuses on when making its prediction.
 
-## Security Scanner
+### 2. **Fine-Tuning the Model**
+You can fine-tune the pre-trained model on your dataset by providing a text file. The model will train for a number of epochs that you specify, allowing you to adapt the model to specific tasks or domains.
 
-### Scan Options
-- **Quick Scan**: Performs basic security checks.
-- **Deep Scan**: Executes comprehensive analysis.
-- **Custom Scan**: Allows user-defined checks.
+### 3. **Contextual Embeddings Analysis**
+This feature allows you to visualize how the model represents each word in a sentence as embeddings. By using dimensionality reduction techniques like **PCA** or **t-SNE**, you can see how semantically similar words are grouped in the embedding space.
 
-### Input Methods
-- Upload code files or input code snippets directly.
-- Scan Git repositories with authentication.
+### 4. **SHAP Explainability**
+Using **SHAP**, the tool provides interpretability by showing which tokens in a sentence contribute most to the model's prediction for the masked token. This is incredibly useful for understanding model behavior and for debugging.
 
-### Output
-- Generates detailed vulnerability reports.
-- Supports export options in JSON and PDF formats.
-- Tracks historical data for trend analysis.
+### 5. **Self-Attention Visualization**
+The tool generates **attention diagrams** that show how the model attends to different words in a sentence. The diagrams are generated for each layer and attention head in the model, and saved as PNG images. The attention heatmaps provide insights into the inner workings of the transformer model, and show how words influence each other.
 
----
+## Example Visualizations
 
-## Configuration
+Here are some examples of attention diagrams generated by the tool:
 
-### Environment Variables
-```
-GROQ_API_KEY          # Required for LLaMA 3 integration
-OPENAI_API_KEY        # Optional for GPT-4
-LLAMA_CLOUD_API_KEY   # Optional for cloud-based services
-```
+![image](https://github.com/AKKI0511/Masked-Language-Model/assets/120317569/40cbf940-1641-44ec-a9b0-3da39067b5db)
+*Attention heatmap from Layer 1, Head 2.*
 
-### Model Configuration
-- **Embedding Model**: BAAI/bge-small-en-v1.5.
-- **Vector Store**: LlamaIndex for efficient indexing.
-- **Node Parser**: Configured with SentenceSplitter for optimal parsing.
+![image](https://github.com/AKKI0511/Masked-Language-Model/assets/120317569/1ea40eb5-6cfb-40c9-8a10-aff6d6297715)
+*Attention heatmap from Layer 2, Head 5.*
 
----
+## How to Fine-Tune the Model
 
-## Usage Instructions
+1. Prepare your dataset as a plain text file.
+2. Choose the **fine-tune** option from the menu when you run the script.
+3. Provide the path to your dataset and specify the number of training epochs.
+4. The model will be trained on your dataset, and you will see the results after each epoch.
 
-### Task Selection
-1. Choose the desired task from the available options.
-2. Input the task-specific details or requirements.
-3. Review and refine the generated output.
-4. Access saved outputs from the designated directory.
+## Customization Options
 
-### Document Management
-1. Upload documents via the user interface.
-2. Allow the system to index content automatically.
-3. Query the indexed content using natural language.
-4. Refresh indexes as needed to include new data.
+The script allows you to customize several key parameters:
 
----
+- **MODEL**: Select from different language models (English, French, German, Chinese, Japanese).
+- **K**: Number of predictions to generate for the masked token.
+- **FONT**: Path to the font file used for rendering text on attention diagrams.
+- **GRID_SIZE**: Size of each grid cell in the attention diagrams.
+- **PIXELS_PER_WORD**: Adjusts the size of each word in pixels for the attention diagrams.
 
-## Development Guidelines
+These constants can be adjusted directly within the script according to your needs.
 
-### Extensibility
-- Integrate additional models through a modular interface.
-- Add new task types with minimal disruption to existing architecture.
-- Enhance UI components for improved usability.
+## Running the Script on a Different Model
 
-### Best Practices
-- Adhere to PEP standards for code quality.
-- Implement robust error handling mechanisms.
-- Use type hints for better readability and debugging.
-- Document all new features and include unit tests.
+If you'd like to use a different pre-trained transformer model (for example, a domain-specific model), you can easily modify the `MODEL` constant or use any Hugging Face model supported by the **AutoTokenizer** and **TFAutoModelForMaskedLM** classes.
 
----
+## Acknowledgements
 
-## Contributions
-Contributions are welcome! Please submit pull requests or open issues to improve the project.
-
----
-
-## License
-This project is licensed under the MIT License. See `LICENSE` for details.
+This project uses the powerful **Hugging Face Transformers** library to handle tokenization, model loading, and masked language modeling. The visualizations for attention scores and embeddings are created using **PIL** and **matplotlib**. The project also leverages **SHAP** for interpretability, allowing for detailed explanations of model predictions.

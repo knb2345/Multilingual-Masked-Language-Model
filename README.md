@@ -1,115 +1,101 @@
-# Self-Attention Visualization and Fine-Tuning with Masked Language Models (MLM)
+# Masked Language Model Toolkit
 
-This repository contains a powerful Python tool for exploring and interacting with **pre-trained Masked Language Models (MLMs)**, such as **BERT**, **CamemBERT**, **BERT-based Multilingual** models, and more. The tool allows users to:
-- **Visualize self-attention** mechanisms in action,
-- **Predict missing tokens** (masked tokens) in sentences,
-- **Fine-tune the model** on custom datasets,
-- **Analyze contextual embeddings** using dimensionality reduction techniques (e.g., PCA, t-SNE),
-- **Explain model predictions** using SHAP (SHapley Additive exPlanations) values for interpretability.
+An interactive command-line tool for probing pre-trained BERT-family masked language
+models: predict masked tokens, inspect self-attention head by head, project contextual
+embeddings into 2D, attribute predictions with SHAP, and fine-tune on your own text.
 
-This project is perfect for anyone interested in natural language processing (NLP), masked language modeling, or understanding how transformers like BERT process and represent language.
+Five languages are supported, each backed by its own monolingual checkpoint:
 
-## Key Features
+| Language | Checkpoint |
+|----------|------------|
+| English  | `bert-base-uncased` |
+| French   | `camembert-base` |
+| German   | `dbmdz/bert-base-german-uncased` |
+| Chinese  | `bert-base-chinese` |
+| Japanese | `cl-tohoku/bert-base-japanese` |
 
-- **Self-Attention Visualization**: Generate attention heatmaps for tokens across different layers and heads of a transformer-based model.
-- **Masked Token Prediction**: Use a pre-trained model to predict the masked token in a sentence.
-- **Model Fine-Tuning**: Easily fine-tune the model with your own dataset and task.
-- **Embedding Analysis**: Visualize the contextual embeddings of tokens in 2D using PCA or t-SNE.
-- **SHAP-based Explainability**: Generate SHAP explanations to understand how each word in a sentence influences the model's predictions.
+The tool loads one checkpoint per session, chosen at startup. It is a multi-language
+tool rather than a single multilingual model — nothing is shared across languages.
 
-## Requirements
-
-To use the tool, you need to have the following installed:
-
-- **Python 3** (recommended version 3.7+)
-- **TensorFlow**
-- **Hugging Face Transformers library**
-- **PIL (Python Imaging Library)**
-- **scikit-learn** for dimensionality reduction (PCA and t-SNE)
-- **SHAP** for explainability
-
-You can install all the dependencies using the following command:
+## Install
 
 ```bash
+git clone https://github.com/knb2345/Multilingual-Masked-Language-Model.git
+cd Multilingual-Masked-Language-Model
 pip install -r requirements.txt
 ```
 
-## Getting Started
+TensorFlow (via `TFAutoModelForMaskedLM`) does the modelling; `tf-keras` is required
+because Transformers does not yet support Keras 3. The first run of each language
+downloads its checkpoint from the Hugging Face Hub.
 
-Follow these simple steps to get started:
+## Run
 
-1. **Clone the repository**:
+```bash
+python mask.py
+```
 
-    ```bash
-    git clone https://github.com/AKKI0511/Masked-Language-Model.git
-    cd Masked-Language-Model
-    ```
+You are prompted for a language, then given a menu:
 
-2. **Run the script**:
+### 1. Predict masked token
 
-    ```bash
-    python mask.py
-    ```
+Enter a sentence containing exactly one `[MASK]` token. The tool prints the top 3
+candidates with softmax confidences and writes an attention heatmap for **every**
+layer/head pair to `images/Attention_Layer{L}_Head{H}.png` — token labels on both axes,
+cell brightness proportional to attention weight. For `bert-base-uncased` that is 12
+layers x 12 heads = 144 images, which is the point: individual heads specialise, and
+seeing them side by side is how you find the ones that track syntax or coreference.
 
-3. **Choose your language**: Upon running the script, you'll be prompted to select a language model. You can choose between **English**, **French**, **German**, **Chinese**, or **Japanese**.
+```
+Enter text with [MASK] token: The capital of France is [MASK].
+Prediction: paris (Confidence: 0.4213)
+...
+```
 
-4. **Interact with the model**: You will be presented with several options to interact with the model:
-    - **Predict masked token**: Enter a sentence with a `[MASK]` token and see the model's top predictions.
-    - **Fine-tune model**: Fine-tune the model on your custom text dataset.
-    - **Analyze contextual embeddings**: Visualize token embeddings in a 2D space using PCA or t-SNE.
-    - **Explain prediction**: Generate SHAP explanations to visualize how each word contributes to the model's masked token prediction.
-    - **Exit**: Terminate the program.
+Create the `images/` directory before running this option.
 
-## Features in Detail
+### 2. Fine-tune model
 
-### 1. **Masked Token Prediction**
-You can input a sentence with a missing word (e.g., `I love [MASK] in the morning.`), and the model will predict the missing token based on the context. Additionally, you can visualize the **self-attention weights** to understand which words in the sentence the model focuses on when making its prediction.
+Point the tool at a plain-text file and give it an epoch count. The text is tokenised,
+chunked into fixed-length blocks, and trained with `DataCollatorForLanguageModeling`
+(dynamic random masking) on a 90/10 train/validation split. Perplexity is measured on a
+held-out probe set before and after training, so adaptation is reported as a number
+rather than asserted.
 
-### 2. **Fine-Tuning the Model**
-You can fine-tune the pre-trained model on your dataset by providing a text file. The model will train for a number of epochs that you specify, allowing you to adapt the model to specific tasks or domains.
+### 3. Analyze contextual embeddings
 
-### 3. **Contextual Embeddings Analysis**
-This feature allows you to visualize how the model represents each word in a sentence as embeddings. By using dimensionality reduction techniques like **PCA** or **t-SNE**, you can see how semantically similar words are grouped in the embedding space.
+Takes a sentence, pulls final-layer hidden states, and projects them to 2D — PCA under
+50 tokens, t-SNE above (perplexity capped at `n-1`). Saved to
+`contextual_embeddings.png`, coloured by token position. Useful for showing that the
+same surface word gets different vectors in different contexts.
 
-### 4. **SHAP Explainability**
-Using **SHAP**, the tool provides interpretability by showing which tokens in a sentence contribute most to the model's prediction for the masked token. This is incredibly useful for understanding model behavior and for debugging.
+### 4. Explain prediction
 
-### 5. **Self-Attention Visualization**
-The tool generates **attention diagrams** that show how the model attends to different words in a sentence. The diagrams are generated for each layer and attention head in the model, and saved as PNG images. The attention heatmaps provide insights into the inner workings of the transformer model, and show how words influence each other.
+Runs a SHAP `Explainer` over a text masker with the model's own top-3 candidates as
+output names, so you get per-input-token attributions for each candidate: which words in
+the sentence actually pushed the model toward `paris` rather than `lyon`. This is the
+slowest option — SHAP re-runs the model over many perturbations of the input.
 
-## Example Visualizations
+## Repository layout
 
-Here are some examples of attention diagrams generated by the tool:
+```
+mask.py            # everything: EnhancedMaskedLanguageModel class + CLI
+requirements.txt
+assets/fonts/      # OpenSans, used to label attention diagrams
+```
 
-![image](https://github.com/AKKI0511/Masked-Language-Model/assets/120317569/40cbf940-1641-44ec-a9b0-3da39067b5db)
-*Attention heatmap from Layer 1, Head 2.*
+## Known limitations
 
-![image](https://github.com/AKKI0511/Masked-Language-Model/assets/120317569/1ea40eb5-6cfb-40c9-8a10-aff6d6297715)
-*Attention heatmap from Layer 2, Head 5.*
-
-## How to Fine-Tune the Model
-
-1. Prepare your dataset as a plain text file.
-2. Choose the **fine-tune** option from the menu when you run the script.
-3. Provide the path to your dataset and specify the number of training epochs.
-4. The model will be trained on your dataset, and you will see the results after each epoch.
-
-## Customization Options
-
-The script allows you to customize several key parameters:
-
-- **MODEL**: Select from different language models (English, French, German, Chinese, Japanese).
-- **K**: Number of predictions to generate for the masked token.
-- **FONT**: Path to the font file used for rendering text on attention diagrams.
-- **GRID_SIZE**: Size of each grid cell in the attention diagrams.
-- **PIXELS_PER_WORD**: Adjusts the size of each word in pixels for the attention diagrams.
-
-These constants can be adjusted directly within the script according to your needs.
-
-## Running the Script on a Different Model
-
-If you'd like to use a different pre-trained transformer model (for example, a domain-specific model), you can easily modify the `MODEL` constant or use any Hugging Face model supported by the **AutoTokenizer** and **TFAutoModelForMaskedLM** classes.
+- One `[MASK]` per sentence; multi-mask inputs are not handled.
+- No quantitative accuracy evaluation of predictions — the tool is for inspection, not
+  benchmarking.
+- Attention visualisation writes every head to disk with no filtering; expect a few
+  hundred PNGs per sentence.
+- Fine-tuning holds the whole corpus in memory, so it suits small domain corpora.
 
 ## Acknowledgements
 
-This project uses the powerful **Hugging Face Transformers** library to handle tokenization, model loading, and masked language modeling. The visualizations for attention scores and embeddings are created using **PIL** and **matplotlib**. The project also leverages **SHAP** for interpretability, allowing for detailed explanations of model predictions.
+The attention-diagram rendering (PIL grid, per-head PNG output) follows the structure of
+Harvard's CS50 AI `attention` project; the multi-language support, fine-tuning,
+perplexity benchmarking, embedding projection, and SHAP explainability are built on top
+of it.
